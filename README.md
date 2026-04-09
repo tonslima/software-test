@@ -83,4 +83,4 @@ _Quais ferramentas de IA você usou e para quê? Encorajamos o uso de IA — que
 
 - Você tem **2 a 3 dias** para completar o desafio.
 - Valorizamos uma solução **completa, limpa e bem documentada** mais do que uma rica em features. Se o tempo estiver curto, reduza escopo, não qualidade.
-- Após a entrega, faremos uma conversa técnica de ~45 minutos sobre sua implementação.# software-test
+- Após a entrega, faremos uma conversa técnica de ~45 minutos sobre sua implementação.
