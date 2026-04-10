@@ -15,6 +15,7 @@ O desenvolvedor anterior deixou notas, especificações e exemplos na pasta `doc
 - **Linguagem e framework:** Kotlin + Spring Boot
 - **Banco de dados:** PostgreSQL (docker-compose fornecido)
 - **Testes automatizados:** Testes unitários são obrigatórios. Testes de integração são bem-vindos.
+- **Seed data:** As transações internas de exemplo (`docs/sample-files/internal-transactions.json`) devem ser carregadas no banco de forma automatizada (migration, seed script, ou outro mecanismo à sua escolha).
 
 ### Funcionalidades
 
@@ -37,8 +38,11 @@ As regras de negócio, especificações técnicas e exemplos de dados estão na 
 
 ## Como começar
 
+1. **Faça um fork** deste repositório para sua conta pessoal do GitHub.
+2. Clone o seu fork e trabalhe nele normalmente.
+3. Suba o banco de dados:
+
 ```bash
-# Subir o banco de dados
 docker-compose up -d
 
 # O PostgreSQL estará disponível em localhost:5432
@@ -49,7 +53,8 @@ docker-compose up -d
 
 ## Entrega
 
-Preencha as seções abaixo com informações sobre sua implementação. Além do código, essa documentação é parte importante da avaliação.
+1. Ao finalizar, **abra um Pull Request do seu fork para o repositório original** (branch `main`).
+2. Preencha as seções abaixo no README do seu PR com informações sobre sua implementação. Além do código, essa documentação é parte importante da avaliação.
 
 ### Como rodar
 
@@ -83,4 +88,6 @@ _Quais ferramentas de IA você usou e para quê? Encorajamos o uso de IA — que
 
 - Você tem **2 a 3 dias** para completar o desafio.
 - Valorizamos uma solução **completa, limpa e bem documentada** mais do que uma rica em features. Se o tempo estiver curto, reduza escopo, não qualidade.
+- **Mantenha no repositório todos os arquivos de configuração de IA que você utilizou** (ex: `CLAUDE.md`, `.cursorrules`, `.github/copilot-instructions.md`, custom skills, prompts de sistema, ou qualquer outro arquivo de configuração de ferramentas de IA). Esses arquivos fazem parte da avaliação — queremos entender como você configura e direciona suas ferramentas.
+- **Não inclua código malicioso no projeto.** É responsabilidade do candidato garantir que o repositório não contenha scripts ou dependências prejudiciais. Caso seja identificado qualquer código malicioso, o projeto será desconsiderado e não será avaliado.
 - Após a entrega, faremos uma conversa técnica de ~45 minutos sobre sua implementação.
