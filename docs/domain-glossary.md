@@ -30,7 +30,29 @@ Exemplo: se o valor interno é `R$ 100,00` e o processador reporta `R$ 99,99`, a
 
 ### Escopo temporal
 
-A reconciliação compara o arquivo do processador com transações internas criadas nos **últimos 7 dias**. Transações internas mais antigas que 7 dias não devem ser consideradas como "unreconciled (internal)" — elas já foram (ou deveriam ter sido) reconciliadas em execuções anteriores.
+A reconciliação compara o arquivo do processador com transações internas criadas em uma **janela de 7 dias** ancorada em uma **data de referência** (`referenceDate`).
+
+#### Data de referência (`referenceDate`)
+
+- É a **data à qual o arquivo CSV se refere** — ou seja, o dia de liquidação que aquele arquivo representa (o "dia do PaySettler"). **Não** é a data em que o upload está sendo feito, nem `now()` do servidor.
+- Deve ser **informada explicitamente pelo cliente na request** que dispara a reconciliação. Não é derivada do conteúdo do arquivo (o CSV pode conter transações com `settled_at` ligeiramente antes/depois por causa de timezone e janelas de corte do processador).
+- Formato: `ISO-8601 date` (`YYYY-MM-DD`), interpretada em **UTC** (mesmo timezone do `settled_at` do CSV).
+- Validações:
+  - Obrigatória.
+  - Não pode ser uma data no futuro (em UTC).
+  - Não pode ser mais antiga que 90 dias em relação a hoje (evita varreduras acidentais de histórico longo).
+
+#### Janela de 7 dias
+
+- A janela considerada é `[referenceDate - 7 dias, referenceDate]` (inclusiva nas duas pontas), aplicada sobre o `createdAt` das transações internas.
+- Transações internas fora dessa janela **não** são consideradas como "unreconciled (internal)" — elas já foram (ou deveriam ter sido) reconciliadas em execuções anteriores.
+- Transações do CSV que caem fora da janela ainda são processadas normalmente — o filtro temporal é aplicado **apenas no lado interno**, pra decidir o universo de candidatos a "unreconciled (internal)".
+
+#### Persistência
+
+- A `referenceDate` usada deve ser persistida no `ReconciliationRun` correspondente, junto com `createdAt` (timestamp real do sistema). Os dois conceitos são distintos:
+  - `referenceDate` → tempo de **negócio** (qual dia está sendo reconciliado).
+  - `createdAt` → tempo de **sistema** (quando o run foi executado).
 
 ### Reconciliation Run
 
