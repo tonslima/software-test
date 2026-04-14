@@ -19,7 +19,7 @@ O desenvolvedor anterior deixou notas, especificações e exemplos na pasta `doc
 
 ### Funcionalidades
 
-1. **Upload de arquivo de liquidação:** Endpoint que recebe um arquivo CSV do processador de pagamentos e dispara o processo de reconciliação.
+1. **Upload de arquivo de liquidação:** Endpoint que recebe um arquivo CSV do processador de pagamentos junto com a `referenceDate` correspondente, e dispara o processo de reconciliação (veja `docs/processor-api-spec.md`).
 
 2. **Reconciliação:** Comparação entre as transações do arquivo recebido e as transações internas do sistema, categorizando cada transação conforme as regras do domínio.
 
