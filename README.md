@@ -86,7 +86,7 @@ _Quais ferramentas de IA você usou e para quê? Encorajamos o uso de IA — que
 
 ## Observações
 
-- Você tem **2 a 3 dias** para completar o desafio.
+- Você tem **7 dias** para completar o desafio.
 - Valorizamos uma solução **completa, limpa e bem documentada** mais do que uma rica em features. Se o tempo estiver curto, reduza escopo, não qualidade.
 - **Mantenha no repositório todos os arquivos de configuração de IA que você utilizou** (ex: `CLAUDE.md`, `.cursorrules`, `.github/copilot-instructions.md`, custom skills, prompts de sistema, ou qualquer outro arquivo de configuração de ferramentas de IA). Esses arquivos fazem parte da avaliação — queremos entender como você configura e direciona suas ferramentas.
 - **Não inclua código malicioso no projeto.** É responsabilidade do candidato garantir que o repositório não contenha scripts ou dependências prejudiciais. Caso seja identificado qualquer código malicioso, o projeto será desconsiderado e não será avaliado.
