@@ -1,7 +1,3 @@
-# Notas do Desenvolvedor Anterior
-
-> Essas notas foram escritas por Carlos antes de sair da empresa. Ele começou o serviço mas não concluiu a implementação.
-
 ## Stack escolhida
 
 - **Kotlin** com **Spring Boot 4**
@@ -20,7 +16,6 @@
 - API REST (upload de CSV, consulta de resultados, estatísticas)
 - Migrations do banco de dados
 - Testes automatizados
-- Basicamente... tudo. Desculpa, pessoal.
 
 ## Preocupações com performance
 
