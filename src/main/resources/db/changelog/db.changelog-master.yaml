@@ -1,0 +1,7 @@
+databaseChangeLog:
+  - include:
+      file: db/changelog/001-create-reconciliation-runs.yaml
+  - include:
+      file: db/changelog/002-create-internal-transactions.yaml
+  - include:
+      file: db/changelog/003-seed-internal-transactions.yaml

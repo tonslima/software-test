@@ -1,0 +1,32 @@
+databaseChangeLog:
+  - changeSet:
+      id: 003-seed-internal-transactions
+      author: settlement-team
+      context: dev
+      changes:
+        - loadData:
+            tableName: internal_transactions
+            file: db/changelog/seed/internal-transactions.csv
+            separator: ","
+            columns:
+              - column:
+                  name: transaction_id
+                  type: STRING
+              - column:
+                  name: merchant_id
+                  type: STRING
+              - column:
+                  name: amount
+                  type: NUMERIC
+              - column:
+                  name: currency
+                  type: STRING
+              - column:
+                  name: created_at
+                  type: STRING
+              - column:
+                  name: status
+                  type: STRING
+              - column:
+                  name: description
+                  type: STRING

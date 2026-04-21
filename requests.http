@@ -1,0 +1,43 @@
+### POST /reconciliations - Upload CSV for reconciliation
+POST http://localhost:8080/reconciliations
+Content-Type: multipart/form-data; boundary=boundary
+
+--boundary
+Content-Disposition: form-data; name="referenceDate"
+
+2026-04-19
+--boundary
+Content-Disposition: form-data; name="file"; filename="settlement.csv"
+Content-Type: text/csv
+
+transaction_id,merchant_id,amount,currency,settled_at,processor_reference,status
+550e8400-e29b-41d4-a716-446655440000,MERCH_001,152.30,BRL,2025-03-15T14:30:00Z,PS-2025-00012345,SETTLED
+--boundary--
+
+### POST /reconciliations - Missing referenceDate (should return 400)
+POST http://localhost:8080/reconciliations
+Content-Type: multipart/form-data; boundary=boundary
+
+--boundary
+Content-Disposition: form-data; name="file"; filename="settlement.csv"
+Content-Type: text/csv
+
+transaction_id,merchant_id,amount,currency,settled_at,processor_reference,status
+550e8400-e29b-41d4-a716-446655440000,MERCH_001,152.30,BRL,2025-03-15T14:30:00Z,PS-2025-00012345,SETTLED
+--boundary--
+
+### POST /reconciliations - Future referenceDate (should return 400)
+POST http://localhost:8080/reconciliations
+Content-Type: multipart/form-data; boundary=boundary
+
+--boundary
+Content-Disposition: form-data; name="referenceDate"
+
+2099-01-01
+--boundary
+Content-Disposition: form-data; name="file"; filename="settlement.csv"
+Content-Type: text/csv
+
+transaction_id,merchant_id,amount,currency,settled_at,processor_reference,status
+550e8400-e29b-41d4-a716-446655440000,MERCH_001,152.30,BRL,2025-03-15T14:30:00Z,PS-2025-00012345,SETTLED
+--boundary--
