@@ -1,7 +1,7 @@
 package br.com.marvin.api.infrastructure.persistence
 
-import br.com.marvin.api.domain.ReconciliationCategory
-import br.com.marvin.api.domain.ReconciliationResult
+import br.com.marvin.api.domain.vo.ReconciliationCategory
+import br.com.marvin.api.domain.model.ReconciliationResult
 import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.data.jpa.repository.NativeQuery
 import org.springframework.data.jpa.repository.Query

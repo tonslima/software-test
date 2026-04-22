@@ -1,5 +1,8 @@
 package br.com.marvin.api.infrastructure.csv
 
+import br.com.marvin.api.application.CsvTransaction
+import br.com.marvin.api.application.port.CsvParser
+import br.com.marvin.api.exception.CsvParseException
 import org.apache.commons.csv.CSVFormat
 import org.apache.commons.csv.CSVParser
 import org.apache.commons.csv.CSVRecord
@@ -9,9 +12,9 @@ import java.math.BigDecimal
 import java.util.UUID
 
 @Component
-class ReconciliationCsvParser {
+class ApacheCsvParser : CsvParser {
 
-    fun parse(inputStream: InputStream): Sequence<CsvTransaction> {
+    override fun parse(inputStream: InputStream): Sequence<CsvTransaction> {
         val reader = inputStream.bufferedReader()
         val format = CSVFormat.DEFAULT.builder().setHeader().setSkipHeaderRecord(true).build()
         val csvParser = CSVParser(reader, format)
@@ -68,48 +71,3 @@ class ReconciliationCsvParser {
         )
     }
 }
-
-data class CsvTransaction(
-    val transactionId: UUID,
-    val merchantId: String,
-    val amount: BigDecimal,
-    val currency: String,
-    val settledAt: String,
-    val processorReference: String,
-    val status: String,
-)
-
-class CsvParseException(message: String) : RuntimeException(message)
-
-// --- Implementação anterior (split) para comparação ---
-//
-// fun parse(inputStream: InputStream): Sequence<CsvTransaction> {
-//     val reader = inputStream.bufferedReader()
-//     reader.readLine() ?: return emptySequence()
-//
-//     val seen = mutableSetOf<UUID>()
-//
-//     return generateSequence { reader.readLine() }
-//         .filter { it.isNotBlank() }
-//         .map { line -> parseLine(line) }
-//         .filter { seen.add(it.transactionId) }
-// }
-//
-// private fun parseLine(line: String): CsvTransaction {
-//     val fields = line.split(",")
-//     if (fields.size < 7) throw CsvParseException("Malformed line: $line")
-//
-//     return try {
-//         CsvTransaction(
-//             transactionId = UUID.fromString(fields[0].trim()),
-//             merchantId = fields[1].trim(),
-//             amount = BigDecimal(fields[2].trim()),
-//             currency = fields[3].trim(),
-//             settledAt = fields[4].trim(),
-//             processorReference = fields[5].trim(),
-//             status = fields[6].trim(),
-//         )
-//     } catch (ex: Exception) {
-//         throw CsvParseException("Malformed line: $line — ${ex.message}")
-//     }
-// }

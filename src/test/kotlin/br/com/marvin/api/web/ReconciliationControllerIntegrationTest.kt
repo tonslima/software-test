@@ -1,7 +1,7 @@
 package br.com.marvin.api.web
 
-import br.com.marvin.api.infrastructure.messaging.ReconciliationEventPublisher
-import br.com.marvin.api.infrastructure.storage.ReconciliationFileStorage
+import br.com.marvin.api.application.port.FileStorage
+import br.com.marvin.api.application.port.ReconciliationEventPublisher
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc
@@ -25,7 +25,7 @@ class ReconciliationControllerIntegrationTest {
     private lateinit var mockMvc: MockMvc
 
     @MockitoBean
-    private lateinit var fileStorage: ReconciliationFileStorage
+    private lateinit var fileStorage: FileStorage
 
     @MockitoBean
     private lateinit var eventPublisher: ReconciliationEventPublisher

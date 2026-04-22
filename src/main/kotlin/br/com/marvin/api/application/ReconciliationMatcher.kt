@@ -1,8 +1,7 @@
 package br.com.marvin.api.application
 
-import br.com.marvin.api.domain.InternalTransaction
-import br.com.marvin.api.domain.ReconciliationCategory
-import br.com.marvin.api.infrastructure.csv.CsvTransaction
+import br.com.marvin.api.domain.model.InternalTransaction
+import br.com.marvin.api.domain.vo.ReconciliationCategory
 import org.springframework.stereotype.Component
 import java.math.BigDecimal
 import java.util.UUID
@@ -44,9 +43,3 @@ class ReconciliationMatcher {
         val TOLERANCE: BigDecimal = BigDecimal("0.01")
     }
 }
-
-data class MatchResult(
-    val category: ReconciliationCategory,
-    val processorAmount: BigDecimal?,
-    val internalAmount: BigDecimal?,
-)

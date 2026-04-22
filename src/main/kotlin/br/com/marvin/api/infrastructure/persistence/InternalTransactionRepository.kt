@@ -1,6 +1,6 @@
 package br.com.marvin.api.infrastructure.persistence
 
-import br.com.marvin.api.domain.InternalTransaction
+import br.com.marvin.api.domain.model.InternalTransaction
 import org.springframework.data.jpa.repository.JpaRepository
 import java.time.Instant
 import java.util.UUID

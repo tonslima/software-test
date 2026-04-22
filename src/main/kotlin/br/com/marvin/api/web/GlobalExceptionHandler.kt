@@ -1,6 +1,6 @@
 package br.com.marvin.api.web
 
-import br.com.marvin.api.domain.ReferenceDateException
+import br.com.marvin.api.exception.ReferenceDateException
 import org.springframework.http.HttpStatus
 import org.springframework.http.ProblemDetail
 import org.springframework.web.bind.MissingServletRequestParameterException

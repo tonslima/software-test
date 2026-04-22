@@ -1,4 +1,7 @@
-package br.com.marvin.api.domain
+package br.com.marvin.api.domain.model
+
+import br.com.marvin.api.domain.vo.RunStatus
+import br.com.marvin.api.exception.ReferenceDateException
 
 import jakarta.persistence.Column
 import jakarta.persistence.Entity
@@ -44,8 +47,3 @@ class ReconciliationRun(
     }
 }
 
-enum class RunStatus {
-    UPLOADING, PENDING, PROCESSING, COMPLETED, FAILED
-}
-
-class ReferenceDateException(message: String) : RuntimeException(message)

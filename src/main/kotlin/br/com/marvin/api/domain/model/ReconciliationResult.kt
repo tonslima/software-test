@@ -1,4 +1,6 @@
-package br.com.marvin.api.domain
+package br.com.marvin.api.domain.model
+
+import br.com.marvin.api.domain.vo.ReconciliationCategory
 
 import jakarta.persistence.Column
 import jakarta.persistence.Entity
@@ -40,9 +42,3 @@ class ReconciliationResult(
     override fun isNew() = true
 }
 
-enum class ReconciliationCategory {
-    MATCHED,
-    MISMATCHED,
-    UNRECONCILED_PROCESSOR,
-    UNRECONCILED_INTERNAL,
-}

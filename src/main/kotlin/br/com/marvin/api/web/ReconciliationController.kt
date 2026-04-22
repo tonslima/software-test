@@ -1,6 +1,6 @@
 package br.com.marvin.api.web
 
-import br.com.marvin.api.application.CreateReconciliationUseCase
+import br.com.marvin.api.application.usecase.CreateReconciliationUseCase
 import br.com.marvin.api.web.dto.CreateReconciliationResponse
 import org.springframework.format.annotation.DateTimeFormat
 import org.springframework.http.HttpStatus

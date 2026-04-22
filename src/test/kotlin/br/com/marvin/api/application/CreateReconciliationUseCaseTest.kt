@@ -1,10 +1,11 @@
 package br.com.marvin.api.application
 
-import br.com.marvin.api.domain.ReconciliationRun
-import br.com.marvin.api.domain.RunStatus
-import br.com.marvin.api.infrastructure.messaging.ReconciliationEventPublisher
+import br.com.marvin.api.application.port.FileStorage
+import br.com.marvin.api.application.port.ReconciliationEventPublisher
+import br.com.marvin.api.application.usecase.CreateReconciliationUseCase
+import br.com.marvin.api.domain.model.ReconciliationRun
+import br.com.marvin.api.domain.vo.RunStatus
 import br.com.marvin.api.infrastructure.persistence.ReconciliationRunRepository
-import br.com.marvin.api.infrastructure.storage.ReconciliationFileStorage
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
@@ -26,7 +27,7 @@ import kotlin.test.assertTrue
 
 class CreateReconciliationUseCaseTest {
 
-    private val fileStorage = mock<ReconciliationFileStorage>()
+    private val fileStorage = mock<FileStorage>()
     private val runRepository = mock<ReconciliationRunRepository>()
     private val eventPublisher = mock<ReconciliationEventPublisher>()
     private val transactionTemplate = mock<TransactionTemplate>()

@@ -93,25 +93,30 @@ docker-compose up -d
 
 ```
 br.com.marvin.api
-  domain/          ← entities, domain logic.
-  application/     ← use cases, orchestration (@Service)
+  domain/
+    model/         ← JPA entities (ReconciliationRun, ReconciliationResult, InternalTransaction)
+    vo/            ← value objects and enums (RunStatus, ReconciliationCategory)
+  application/
+    port/          ← interfaces for infrastructure (FileStorage, CsvParser, AlertEventPublisher, ReconciliationEventPublisher)
+    usecase/       ← use cases, orchestration (@Service)
+    (root)         ← DTOs and supporting classes (CsvTransaction, MatchResult, ReconciliationMatcher)
   infrastructure/
-    persistence/   ← Spring Data repositories
-    csv/           ← CSV parsing (streaming, line by line)
-    storage/       ← S3 client (LocalStack)
-    messaging/     ← Kafka producers and consumers
+    persistence/   ← Spring Data repositories (no interface abstraction — JPA is stable enough)
+    csv/           ← CSV parsing implementation (ApacheCsvParser)
+    storage/       ← S3 client implementation (S3FileStorage)
+    messaging/     ← Kafka producers, consumers, topic config
   web/
     dto/           ← request/response objects
+  exception/       ← all exceptions (ReferenceDateException, CsvParseException)
 ```
 
 **Rules:**
 - `domain/` must not depend on `infrastructure/` or `web/`
-- `application/` orchestrates — no HTTP, no SQL, no Kafka directly
+- `application/` orchestrates — depends on `port/` interfaces, not on concrete infrastructure
+- Infrastructure classes implement `port/` interfaces and are injected via Spring DI
 - JPA annotations in domain entities are acceptable (pragmatic trade-off)
+- JPA repositories are NOT abstracted behind interfaces — JPA is stable and unlikely to change
 - No circular dependencies between layers
-
-**Architecture decision — ports & adapters (hexagonal):**
-Considered but intentionally not adopted. The project has a single implementation per dependency (one S3 adapter, one Kafka publisher) and a tight deadline. The added abstraction would increase complexity without real benefit at this scale. The chosen layered approach already enforces separation of concerns sufficiently.
 
 ## Error Handling
 

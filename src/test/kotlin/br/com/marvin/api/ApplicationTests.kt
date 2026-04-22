@@ -1,7 +1,7 @@
 package br.com.marvin.api
 
-import br.com.marvin.api.infrastructure.messaging.ReconciliationEventPublisher
-import br.com.marvin.api.infrastructure.storage.ReconciliationFileStorage
+import br.com.marvin.api.application.port.FileStorage
+import br.com.marvin.api.application.port.ReconciliationEventPublisher
 import org.junit.jupiter.api.Test
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.test.context.ActiveProfiles
@@ -12,7 +12,7 @@ import org.springframework.test.context.bean.override.mockito.MockitoBean
 class ApplicationTests {
 
 	@MockitoBean
-	private lateinit var fileStorage: ReconciliationFileStorage
+	private lateinit var fileStorage: FileStorage
 
 	@MockitoBean
 	private lateinit var eventPublisher: ReconciliationEventPublisher

@@ -1,5 +1,7 @@
 package br.com.marvin.api.domain
 
+import br.com.marvin.api.domain.model.ReconciliationRun
+import br.com.marvin.api.exception.ReferenceDateException
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import java.time.LocalDate

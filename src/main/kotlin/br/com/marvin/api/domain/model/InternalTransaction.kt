@@ -1,4 +1,4 @@
-package br.com.marvin.api.domain
+package br.com.marvin.api.domain.model
 
 import jakarta.persistence.Column
 import jakarta.persistence.Entity
