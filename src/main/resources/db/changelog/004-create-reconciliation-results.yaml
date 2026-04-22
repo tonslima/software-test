@@ -1,0 +1,37 @@
+databaseChangeLog:
+  - changeSet:
+      id: 004-create-reconciliation-results
+      author: settlement-team
+      changes:
+        - createTable:
+            tableName: reconciliation_results
+            columns:
+              - column:
+                  name: id
+                  type: uuid
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: run_id
+                  type: uuid
+                  constraints:
+                    nullable: false
+                    foreignKeyName: fk_result_run
+                    references: reconciliation_runs(id)
+              - column:
+                  name: transaction_id
+                  type: uuid
+                  constraints:
+                    nullable: false
+              - column:
+                  name: category
+                  type: varchar(30)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: processor_amount
+                  type: decimal(15,2)
+              - column:
+                  name: internal_amount
+                  type: decimal(15,2)

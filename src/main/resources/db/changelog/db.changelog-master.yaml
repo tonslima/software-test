@@ -5,3 +5,7 @@ databaseChangeLog:
       file: db/changelog/002-create-internal-transactions.yaml
   - include:
       file: db/changelog/003-seed-internal-transactions.yaml
+  - include:
+      file: db/changelog/004-create-reconciliation-results.yaml
+  - include:
+      file: db/changelog/005-add-error-message-to-runs.yaml

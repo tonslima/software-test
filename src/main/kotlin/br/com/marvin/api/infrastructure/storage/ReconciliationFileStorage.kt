@@ -18,4 +18,8 @@ class ReconciliationFileStorage(
             RequestBody.fromInputStream(inputStream, contentLength),
         )
     }
+
+    fun download(key: String): InputStream {
+        return s3Client.getObject { it.bucket(bucket).key(key) }
+    }
 }

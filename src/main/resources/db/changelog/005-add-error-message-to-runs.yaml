@@ -1,0 +1,11 @@
+databaseChangeLog:
+  - changeSet:
+      id: 005-add-error-message-to-runs
+      author: settlement-team
+      changes:
+        - addColumn:
+            tableName: reconciliation_runs
+            columns:
+              - column:
+                  name: error_message
+                  type: varchar(1000)
