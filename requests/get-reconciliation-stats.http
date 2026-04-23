@@ -1,0 +1,7 @@
+@runId = 11178792-680f-461d-84e6-24ef41e82e2c
+
+### GET /reconciliations/{runId}/stats - Stats for completed run
+GET http://localhost:8080/reconciliations/{{runId}}/stats
+
+### GET /reconciliations/{runId}/stats - Run not found (should return 404)
+GET http://localhost:8080/reconciliations/00000000-0000-0000-0000-000000000000/stats

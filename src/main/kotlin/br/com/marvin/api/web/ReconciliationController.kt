@@ -2,7 +2,9 @@ package br.com.marvin.api.web
 
 import br.com.marvin.api.application.usecase.CreateReconciliationUseCase
 import br.com.marvin.api.application.usecase.GetReconciliationResultsUseCase
+import br.com.marvin.api.application.usecase.GetReconciliationStatsUseCase
 import br.com.marvin.api.application.usecase.ReconciliationResultsOutput
+import br.com.marvin.api.application.usecase.ReconciliationStatsOutput
 import br.com.marvin.api.domain.vo.ReconciliationCategory
 import br.com.marvin.api.web.dto.CreateReconciliationResponse
 import org.springframework.format.annotation.DateTimeFormat
@@ -24,6 +26,7 @@ import java.util.UUID
 class ReconciliationController(
     private val createReconciliationUseCase: CreateReconciliationUseCase,
     private val getReconciliationResultsUseCase: GetReconciliationResultsUseCase,
+    private val getReconciliationStatsUseCase: GetReconciliationStatsUseCase,
 ) {
 
     @PostMapping(consumes = ["multipart/form-data"])
@@ -50,6 +53,18 @@ class ReconciliationController(
 
             is ReconciliationResultsOutput.Done ->
                 ResponseEntity.ok(ReconciliationResultMapper.toResultResponse(output))
+        }
+    }
+
+    @GetMapping("/{runId}/stats")
+    fun getStats(@PathVariable runId: UUID): ResponseEntity<*> {
+        return when (val output = getReconciliationStatsUseCase.execute(runId)) {
+            is ReconciliationStatsOutput.StillProcessing ->
+                ResponseEntity.status(HttpStatus.ACCEPTED)
+                    .body(ReconciliationStatsMapper.toStatusResponse(output))
+
+            is ReconciliationStatsOutput.Done ->
+                ResponseEntity.ok(ReconciliationStatsMapper.toStatsResponse(output))
         }
     }
 }

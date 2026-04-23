@@ -199,6 +199,51 @@ class ReconciliationControllerIntegrationTest {
             .andExpect(status().isBadRequest)
     }
 
+    @Test
+    fun `GET stats returns 404 when run does not exist`() {
+        mockMvc.perform(get("/reconciliations/${UUID.randomUUID()}/stats"))
+            .andExpect(status().isNotFound)
+    }
+
+    @Test
+    fun `GET stats returns 202 when run is still pending`() {
+        val run = createRun(RunStatus.PENDING)
+
+        mockMvc.perform(get("/reconciliations/${run.id}/stats"))
+            .andExpect(status().isAccepted)
+            .andExpect(jsonPath("$.runStatus").value("PENDING"))
+            .andExpect(jsonPath("$.runId").value(run.id.toString()))
+    }
+
+    @Test
+    fun `GET stats returns 200 with category counts for completed run`() {
+        val run = createRun(RunStatus.COMPLETED)
+        resultRepository.save(ReconciliationResult(
+            run = run,
+            transactionId = UUID.randomUUID(),
+            category = ReconciliationCategory.MATCHED,
+            processorAmount = BigDecimal("100.00"),
+            internalAmount = BigDecimal("100.00"),
+        ))
+        resultRepository.save(ReconciliationResult(
+            run = run,
+            transactionId = UUID.randomUUID(),
+            category = ReconciliationCategory.MISMATCHED,
+            processorAmount = BigDecimal("200.00"),
+            internalAmount = BigDecimal("150.00"),
+        ))
+
+        mockMvc.perform(get("/reconciliations/${run.id}/stats"))
+            .andExpect(status().isOk)
+            .andExpect(jsonPath("$.runStatus").value("COMPLETED"))
+            .andExpect(jsonPath("$.totalTransactions").value(2))
+            .andExpect(jsonPath("$.discrepancyRate").value(50.0))
+            .andExpect(jsonPath("$.categories.MATCHED").value(1))
+            .andExpect(jsonPath("$.categories.MISMATCHED").value(1))
+            .andExpect(jsonPath("$.categories.UNRECONCILED_PROCESSOR").value(0))
+            .andExpect(jsonPath("$.categories.UNRECONCILED_INTERNAL").value(0))
+    }
+
     private fun createRun(status: RunStatus): ReconciliationRun {
         val run = ReconciliationRun(
             id = UUID.randomUUID(),

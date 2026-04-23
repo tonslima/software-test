@@ -18,4 +18,7 @@ interface ReconciliationResultRepository : JpaRepository<ReconciliationResult, U
     fun findByRunId(runId: UUID, pageable: Pageable): Page<ReconciliationResult>
 
     fun findByRunIdAndCategoryIn(runId: UUID, categories: Collection<ReconciliationCategory>, pageable: Pageable): Page<ReconciliationResult>
+
+    @Query("SELECT r.category AS category, COUNT(r) AS count FROM ReconciliationResult r WHERE r.run.id = :runId GROUP BY r.category")
+    fun countByRunIdGroupByCategory(runId: UUID): List<CategoryCount>
 }
