@@ -133,7 +133,7 @@ br.com.marvin.api
 ## Seed Data
 
 - Internal transactions are seeded via **Liquibase changeset with `context="dev"`**
-- Source file: `docs/sample-files/internal-transactions.json`
+- Source file: `docs/case/sample-files/internal-transactions.json`
 - In production, this changeset is skipped — real transactions arrive via normal application flow
 
 ## Performance
@@ -144,7 +144,7 @@ br.com.marvin.api
 
 ## Domain
 
-Read `docs/domain-glossary.md` and `docs/processor-api-spec.md` before touching reconciliation code.
+Read `docs/case/domain-glossary.md` and `docs/case/processor-api-spec.md` before touching reconciliation code.
 
 Key rules are documented there. Do not reinterpret them — follow them exactly.
 
