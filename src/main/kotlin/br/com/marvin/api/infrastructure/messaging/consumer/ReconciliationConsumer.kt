@@ -1,6 +1,6 @@
 package br.com.marvin.api.infrastructure.messaging.consumer
 
-import br.com.marvin.api.application.usecase.ProcessReconciliationUseCase
+import br.com.marvin.api.application.usecase.process.ProcessReconciliationUseCase
 import org.slf4j.LoggerFactory
 import org.springframework.kafka.annotation.KafkaListener
 import org.springframework.stereotype.Component

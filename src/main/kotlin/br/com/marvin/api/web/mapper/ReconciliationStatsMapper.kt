@@ -1,6 +1,6 @@
-package br.com.marvin.api.web
+package br.com.marvin.api.web.mapper
 
-import br.com.marvin.api.application.usecase.ReconciliationStatsOutput
+import br.com.marvin.api.application.usecase.stats.ReconciliationStatsOutput
 import br.com.marvin.api.web.dto.ReconciliationRunStatusResponse
 import br.com.marvin.api.web.dto.ReconciliationStatsResponse
 

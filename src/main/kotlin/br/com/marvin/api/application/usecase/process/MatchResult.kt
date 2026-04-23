@@ -1,4 +1,4 @@
-package br.com.marvin.api.application
+package br.com.marvin.api.application.usecase.process
 
 import br.com.marvin.api.domain.vo.ReconciliationCategory
 import java.math.BigDecimal

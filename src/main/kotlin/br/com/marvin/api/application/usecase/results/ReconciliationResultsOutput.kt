@@ -1,4 +1,4 @@
-package br.com.marvin.api.application.usecase
+package br.com.marvin.api.application.usecase.results
 
 import br.com.marvin.api.domain.model.ReconciliationResult
 import br.com.marvin.api.domain.vo.RunStatus

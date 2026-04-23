@@ -1,4 +1,4 @@
-package br.com.marvin.api.application.usecase
+package br.com.marvin.api.application.usecase.create
 
 import br.com.marvin.api.application.port.FileStorage
 import br.com.marvin.api.application.port.ReconciliationEventPublisher

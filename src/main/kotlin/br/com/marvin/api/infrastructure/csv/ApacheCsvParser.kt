@@ -1,6 +1,6 @@
 package br.com.marvin.api.infrastructure.csv
 
-import br.com.marvin.api.application.CsvTransaction
+import br.com.marvin.api.application.usecase.process.CsvTransaction
 import br.com.marvin.api.application.port.CsvParser
 import br.com.marvin.api.exception.CsvParseException
 import org.apache.commons.csv.CSVFormat

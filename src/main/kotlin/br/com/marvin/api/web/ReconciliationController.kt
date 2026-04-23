@@ -1,12 +1,14 @@
 package br.com.marvin.api.web
 
-import br.com.marvin.api.application.usecase.CreateReconciliationUseCase
-import br.com.marvin.api.application.usecase.GetReconciliationResultsUseCase
-import br.com.marvin.api.application.usecase.GetReconciliationStatsUseCase
-import br.com.marvin.api.application.usecase.ReconciliationResultsOutput
-import br.com.marvin.api.application.usecase.ReconciliationStatsOutput
+import br.com.marvin.api.application.usecase.create.CreateReconciliationUseCase
+import br.com.marvin.api.application.usecase.results.GetReconciliationResultsUseCase
+import br.com.marvin.api.application.usecase.stats.GetReconciliationStatsUseCase
+import br.com.marvin.api.application.usecase.results.ReconciliationResultsOutput
+import br.com.marvin.api.application.usecase.stats.ReconciliationStatsOutput
 import br.com.marvin.api.domain.vo.ReconciliationCategory
 import br.com.marvin.api.web.dto.CreateReconciliationResponse
+import br.com.marvin.api.web.mapper.ReconciliationResultMapper
+import br.com.marvin.api.web.mapper.ReconciliationStatsMapper
 import org.springframework.format.annotation.DateTimeFormat
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity

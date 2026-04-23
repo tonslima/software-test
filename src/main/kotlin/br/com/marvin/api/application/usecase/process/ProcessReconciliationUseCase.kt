@@ -1,6 +1,5 @@
-package br.com.marvin.api.application.usecase
+package br.com.marvin.api.application.usecase.process
 
-import br.com.marvin.api.application.ReconciliationMatcher
 import br.com.marvin.api.application.port.AlertEventPublisher
 import br.com.marvin.api.application.port.CsvParser
 import br.com.marvin.api.application.port.FileStorage

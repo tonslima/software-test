@@ -1,4 +1,4 @@
-package br.com.marvin.api.application
+package br.com.marvin.api.application.usecase.process
 
 import java.math.BigDecimal
 import java.util.UUID

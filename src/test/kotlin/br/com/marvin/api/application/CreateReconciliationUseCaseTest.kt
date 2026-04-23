@@ -2,7 +2,7 @@ package br.com.marvin.api.application
 
 import br.com.marvin.api.application.port.FileStorage
 import br.com.marvin.api.application.port.ReconciliationEventPublisher
-import br.com.marvin.api.application.usecase.CreateReconciliationUseCase
+import br.com.marvin.api.application.usecase.create.CreateReconciliationUseCase
 import br.com.marvin.api.domain.model.ReconciliationRun
 import br.com.marvin.api.domain.vo.RunStatus
 import br.com.marvin.api.infrastructure.persistence.ReconciliationRunRepository

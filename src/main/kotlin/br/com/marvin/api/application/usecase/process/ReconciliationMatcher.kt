@@ -1,4 +1,4 @@
-package br.com.marvin.api.application
+package br.com.marvin.api.application.usecase.process
 
 import br.com.marvin.api.domain.model.InternalTransaction
 import br.com.marvin.api.domain.vo.ReconciliationCategory
@@ -21,8 +21,6 @@ class ReconciliationMatcher {
         )
 
         val difference = (csvTransaction.amount - internal.amount).abs()
-
-//        if (csvTransaction.amount in internal.amount - TOLERANCE..internal.amount + TOLERANCE)
 
         if (difference <= TOLERANCE) {
             return MatchResult(
