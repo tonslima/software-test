@@ -1,0 +1,19 @@
+@runId = aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa
+
+### GET /reconciliations/{runId}/results - All results (replace runId)
+GET http://localhost:8080/reconciliations/{{runId}}/results
+
+### GET /reconciliations/{runId}/results - With pagination
+GET http://localhost:8080/reconciliations/{{runId}}/results?page=0&size=50
+
+### GET /reconciliations/{runId}/results - Filter by single category
+GET http://localhost:8080/reconciliations/{{runId}}/results?category=MISMATCHED
+
+### GET /reconciliations/{runId}/results - Filter by multiple categories
+GET http://localhost:8080/reconciliations/{{runId}}/results?category=MISMATCHED&category=UNRECONCILED_PROCESSOR&category=UNRECONCILED_INTERNAL
+
+### GET /reconciliations/{runId}/results - Size exceeds maximum (should return 400)
+GET http://localhost:8080/reconciliations/{{runId}}/results?size=201
+
+### GET /reconciliations/{runId}/results - Run not found (should return 404)
+GET http://localhost:8080/reconciliations/00000000-0000-0000-0000-000000000000/results

@@ -1,0 +1,58 @@
+### POST /reconciliations - Upload CSV for reconciliation
+POST http://localhost:8080/reconciliations
+Content-Type: multipart/form-data; boundary=boundary
+
+--boundary
+Content-Disposition: form-data; name="referenceDate"
+
+2026-03-15
+--boundary
+Content-Disposition: form-data; name="file"; filename="settlement.csv"
+Content-Type: text/csv
+
+transaction_id,merchant_id,amount,currency,settled_at,processor_reference,status
+a1b2c3d4-e5f6-7890-abcd-ef1234567890,MERCH_001,250.00,BRL,2025-03-15T10:30:00Z,PS-2025-00001001,SETTLED
+b2c3d4e5-f6a7-8901-bcde-f12345678901,MERCH_001,89.99,BRL,2025-03-15T11:15:00Z,PS-2025-00001002,SETTLED
+c3d4e5f6-a7b8-9012-cdef-123456789012,MERCH_002,1500.00,BRL,2025-03-15T12:00:00Z,PS-2025-00001003,SETTLED
+d4e5f6a7-b8c9-0123-defa-234567890123,MERCH_002,320.50,BRL,2025-03-15T12:45:00Z,PS-2025-00001004,SETTLED
+e5f6a7b8-c9d0-1234-efab-345678901234,MERCH_003,75.00,BRL,2025-03-15T13:30:00Z,PS-2025-00001005,SETTLED
+f6a7b8c9-d0e1-2345-fabc-456789012345,MERCH_001,199.99,BRL,2025-03-15T14:00:00Z,PS-2025-00001006,SETTLED
+a7b8c9d0-e1f2-3456-abcd-567890123456,MERCH_003,450.00,BRL,2025-03-15T14:30:00Z,PS-2025-00001007,SETTLED
+b8c9d0e1-f2a3-4567-bcde-678901234567,MERCH_002,62.49,BRL,2025-03-15T15:00:00Z,PS-2025-00001008,SETTLED
+c9d0e1f2-a3b4-5678-cdef-789012345678,MERCH_001,1200.00,BRL,2025-03-15T15:30:00Z,PS-2025-00001009,SETTLED
+d0e1f2a3-b4c5-6789-defa-890123456789,MERCH_003,33.00,BRL,2025-03-15T16:00:00Z,PS-2025-00001010,SETTLED
+e1f2a3b4-c5d6-7890-efab-901234567890,MERCH_002,550.01,BRL,2025-03-15T16:30:00Z,PS-2025-00001011,SETTLED
+f2a3b4c5-d6e7-8901-fabc-012345678901,MERCH_001,88.00,BRL,2025-03-15T17:00:00Z,PS-2025-00001012,SETTLED
+a3b4c5d6-e7f8-9012-abcd-123456789abc,MERCH_003,175.00,BRL,2025-03-15T17:30:00Z,PS-2025-00001013,REVERSED
+b4c5d6e7-f8a9-0123-bcde-234567890bcd,MERCH_002,999.99,BRL,2025-03-15T18:00:00Z,PS-2025-00001014,SETTLED
+b4c5d6e7-f8a9-0123-bcde-234567890bcd,MERCH_002,999.99,BRL,2025-03-15T18:00:00Z,PS-2025-00001014,SETTLED
+c5d6e7f8-a9b0-1234-cdef-345678901cde,MERCH_001,42.00,BRL,2025-03-15T18:30:00Z,PS-2025-00001015,SETTLED
+--boundary--
+
+### POST /reconciliations - Missing referenceDate (should return 400)
+POST http://localhost:8080/reconciliations
+Content-Type: multipart/form-data; boundary=boundary
+
+--boundary
+Content-Disposition: form-data; name="file"; filename="settlement.csv"
+Content-Type: text/csv
+
+transaction_id,merchant_id,amount,currency,settled_at,processor_reference,status
+550e8400-e29b-41d4-a716-446655440000,MERCH_001,152.30,BRL,2025-03-15T14:30:00Z,PS-2025-00012345,SETTLED
+--boundary--
+
+### POST /reconciliations - Future referenceDate (should return 400)
+POST http://localhost:8080/reconciliations
+Content-Type: multipart/form-data; boundary=boundary
+
+--boundary
+Content-Disposition: form-data; name="referenceDate"
+
+2099-01-01
+--boundary
+Content-Disposition: form-data; name="file"; filename="settlement.csv"
+Content-Type: text/csv
+
+transaction_id,merchant_id,amount,currency,settled_at,processor_reference,status
+550e8400-e29b-41d4-a716-446655440000,MERCH_001,152.30,BRL,2025-03-15T14:30:00Z,PS-2025-00012345,SETTLED
+--boundary--
