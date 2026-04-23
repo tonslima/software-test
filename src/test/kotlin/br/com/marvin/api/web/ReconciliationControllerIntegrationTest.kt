@@ -2,6 +2,12 @@ package br.com.marvin.api.web
 
 import br.com.marvin.api.application.port.FileStorage
 import br.com.marvin.api.application.port.ReconciliationEventPublisher
+import br.com.marvin.api.domain.model.ReconciliationResult
+import br.com.marvin.api.domain.model.ReconciliationRun
+import br.com.marvin.api.domain.vo.ReconciliationCategory
+import br.com.marvin.api.domain.vo.RunStatus
+import br.com.marvin.api.infrastructure.persistence.ReconciliationResultRepository
+import br.com.marvin.api.infrastructure.persistence.ReconciliationRunRepository
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc
@@ -10,11 +16,14 @@ import org.springframework.mock.web.MockMultipartFile
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.context.bean.override.mockito.MockitoBean
 import org.springframework.test.web.servlet.MockMvc
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
+import java.math.BigDecimal
 import java.time.LocalDate
 import java.time.ZoneOffset
+import java.util.UUID
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -23,6 +32,12 @@ class ReconciliationControllerIntegrationTest {
 
     @Autowired
     private lateinit var mockMvc: MockMvc
+
+    @Autowired
+    private lateinit var runRepository: ReconciliationRunRepository
+
+    @Autowired
+    private lateinit var resultRepository: ReconciliationResultRepository
 
     @MockitoBean
     private lateinit var fileStorage: FileStorage
@@ -110,5 +125,87 @@ class ReconciliationControllerIntegrationTest {
                 .param("referenceDate", validDate)
         )
             .andExpect(status().isBadRequest)
+    }
+
+    @Test
+    fun `GET results returns 404 when run does not exist`() {
+        mockMvc.perform(get("/reconciliations/${UUID.randomUUID()}/results"))
+            .andExpect(status().isNotFound)
+    }
+
+    @Test
+    fun `GET results returns 202 when run is still pending`() {
+        val run = createRun(RunStatus.PENDING)
+
+        mockMvc.perform(get("/reconciliations/${run.id}/results"))
+            .andExpect(status().isAccepted)
+            .andExpect(jsonPath("$.runStatus").value("PENDING"))
+    }
+
+    @Test
+    fun `GET results returns 200 with paginated results for completed run`() {
+        val run = createRun(RunStatus.COMPLETED)
+        resultRepository.save(ReconciliationResult(
+            run = run,
+            transactionId = UUID.randomUUID(),
+            category = ReconciliationCategory.MATCHED,
+            processorAmount = BigDecimal("100.00"),
+            internalAmount = BigDecimal("100.00"),
+        ))
+        resultRepository.save(ReconciliationResult(
+            run = run,
+            transactionId = UUID.randomUUID(),
+            category = ReconciliationCategory.MISMATCHED,
+            processorAmount = BigDecimal("200.00"),
+            internalAmount = BigDecimal("150.00"),
+        ))
+
+        mockMvc.perform(get("/reconciliations/${run.id}/results"))
+            .andExpect(status().isOk)
+            .andExpect(jsonPath("$.runStatus").value("COMPLETED"))
+            .andExpect(jsonPath("$.totalElements").value(2))
+            .andExpect(jsonPath("$.results.length()").value(2))
+    }
+
+    @Test
+    fun `GET results filters by category`() {
+        val run = createRun(RunStatus.COMPLETED)
+        resultRepository.save(ReconciliationResult(
+            run = run,
+            transactionId = UUID.randomUUID(),
+            category = ReconciliationCategory.MATCHED,
+            processorAmount = BigDecimal("100.00"),
+            internalAmount = BigDecimal("100.00"),
+        ))
+        resultRepository.save(ReconciliationResult(
+            run = run,
+            transactionId = UUID.randomUUID(),
+            category = ReconciliationCategory.MISMATCHED,
+            processorAmount = BigDecimal("200.00"),
+            internalAmount = BigDecimal("150.00"),
+        ))
+
+        mockMvc.perform(get("/reconciliations/${run.id}/results?category=MISMATCHED"))
+            .andExpect(status().isOk)
+            .andExpect(jsonPath("$.totalElements").value(1))
+            .andExpect(jsonPath("$.results[0].category").value("MISMATCHED"))
+    }
+
+    @Test
+    fun `GET results returns 400 when size exceeds maximum`() {
+        val run = createRun(RunStatus.COMPLETED)
+
+        mockMvc.perform(get("/reconciliations/${run.id}/results?size=201"))
+            .andExpect(status().isBadRequest)
+    }
+
+    private fun createRun(status: RunStatus): ReconciliationRun {
+        val run = ReconciliationRun(
+            id = UUID.randomUUID(),
+            referenceDate = LocalDate.now(ZoneOffset.UTC).minusDays(1),
+            s3Key = "reconciliations/runs/test/input.csv",
+        )
+        run.status = status
+        return runRepository.save(run)
     }
 }

@@ -1,0 +1,13 @@
+databaseChangeLog:
+  - changeSet:
+      id: 006-add-index-results-run-category
+      author: settlement-team
+      changes:
+        - createIndex:
+            tableName: reconciliation_results
+            indexName: idx_results_run_id_category
+            columns:
+              - column:
+                  name: run_id
+              - column:
+                  name: category
