@@ -222,7 +222,7 @@ Desenvolvi assumindo que o serviço faz parte de um ecossistema de microsserviç
 
 **Configuração do S3**
 
-O `endpointOverride` do LocalStack está nas properties sem separação por ambiente. Em produção o override sairia e as credenciais viriam de `DefaultCredentialsProvider` (IAM Role). Também revisaria a estrutura de diretórios no bucket: hoje é `reconciliations/runs/{runId}/input.csv`, mas uma organização por data pode facilitar lifecycle rules e auditoria dependendo do volume e das políticas de retenção.
+Revisaria a estrutura de diretórios no bucket: hoje é `reconciliations/runs/{runId}/input.csv`, mas uma organização por data pode facilitar lifecycle rules e auditoria dependendo do volume e das políticas de retenção.
 
 **Observabilidade**
 
