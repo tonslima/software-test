@@ -10,11 +10,11 @@ class KafkaReconciliationEventPublisher(
     private val kafkaTemplate: KafkaTemplate<String, String>,
 ) : ReconciliationEventPublisher {
 
-    companion object {
-        const val TOPIC = "settlement.reconciliation.requested"
-    }
-
     override fun publish(runId: UUID) {
         kafkaTemplate.send(TOPIC, runId.toString(), runId.toString())
+    }
+
+    companion object {
+        const val TOPIC = "settlement.reconciliation.requested"
     }
 }
