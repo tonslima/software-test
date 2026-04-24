@@ -11,7 +11,7 @@ Endpoint `GET /reconciliations/{runId}/results` que retorna os resultados de um 
 ## Requisitos
 
 1. Retornar `404` se o `runId` não existir.
-2. Retornar `202` se o run estiver em status `PENDING` ou `PROCESSING`, com o status atual no body.
+2. Retornar `202` se o run estiver em status `UPLOADING` ou `PENDING`, com o status atual no body.
 3. Retornar `200` com a lista de resultados se o run estiver em status `COMPLETED` ou `FAILED`.
    - Se `FAILED`, a lista estará vazia e o body incluirá o `errorMessage` do run.
 4. Suportar filtro por `category` via query param — aceita múltiplos valores (`?category=MISMATCHED&category=UNRECONCILED_PROCESSOR`).
@@ -58,7 +58,7 @@ GET /reconciliations/{runId}/results?category=MISMATCHED&page=0&size=50
 
 202 Accepted
 {
-  "runStatus": "PROCESSING"
+  "runStatus": "PENDING"
 }
 
 200 OK (FAILED)
@@ -78,13 +78,13 @@ GET /reconciliations/{runId}/results?category=MISMATCHED&page=0&size=50
 ## Decisões de teste
 
 **Unitários:**
-- `GetReconciliationResultsUseCase`: run não encontrado, run PENDING, run PROCESSING, run FAILED, run COMPLETED sem filtro, run COMPLETED com filtro por category, `size` acima do máximo.
+- `GetReconciliationResultsUseCase`: run não encontrado, run PENDING, run FAILED, run COMPLETED sem filtro, run COMPLETED com filtro por category, `size` acima do máximo.
 
 **Integração:**
 - Happy path: POST + processamento + GET com resultado real.
 - GET com filtro por categoria.
 - GET com runId inexistente → 404.
-- GET com run em PROCESSING → 202.
+- GET com run em PENDING → 202.
 
 ## Fora do escopo
 

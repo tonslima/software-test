@@ -25,7 +25,7 @@ Endpoint `GET /reconciliations/{runId}/results` que retorna os resultados de um 
 { "status": 404, "detail": "ReconciliationRun not found: {runId}" }
 ```
 
-`202 Accepted` — run em `UPLOADING`, `PENDING` ou `PROCESSING`
+`202 Accepted` — run em `UPLOADING` ou `PENDING`
 ```json
 {
   "runId": "uuid",
@@ -74,7 +74,7 @@ Endpoint `GET /reconciliations/{runId}/results` que retorna os resultados de um 
 
 ## Decisões tomadas durante a implementação
 
-**`UPLOADING` tratado como estado intermediário:** o PRD mencionava apenas `PENDING` e `PROCESSING` como estados que retornam `202`. Durante a implementação, percebeu-se que `UPLOADING` também é um estado onde os resultados ainda não existem — foi incluído no mesmo bloco.
+**`UPLOADING` tratado como estado intermediário:** o PRD mencionava apenas `PENDING` como estado que retorna `202`. Durante a implementação, percebeu-se que `UPLOADING` também é um estado onde os resultados ainda não existem — foi incluído no mesmo bloco.
 
 **`202` enriquecido com `runId` e `createdAt`:** o PRD previa apenas `runStatus` no body do `202`. Durante a implementação, decidiu-se incluir `runId` e `createdAt` para dar contexto útil ao cliente — saber o que está esperando e há quanto tempo.
 
@@ -89,7 +89,7 @@ Endpoint `GET /reconciliations/{runId}/results` que retorna os resultados de um 
 | PRD | Implementado | Motivo |
 |-----|-------------|--------|
 | `202` retorna apenas `runStatus` | `202` retorna `runId`, `runStatus` e `createdAt` | Resposta mais útil pro cliente |
-| `PENDING` e `PROCESSING` retornam `202` | `UPLOADING`, `PENDING` e `PROCESSING` retornam `202` | `UPLOADING` também é estado sem resultados |
+| `PENDING` retorna `202` | `UPLOADING` e `PENDING` retornam `202` | `UPLOADING` também é estado sem resultados |
 
 ## Limitações conhecidas
 

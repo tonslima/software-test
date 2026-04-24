@@ -19,7 +19,7 @@ Endpoint `GET /reconciliations/{runId}/stats` que retorna contagens por categori
 { "status": 404, "detail": "ReconciliationRun not found: {runId}" }
 ```
 
-`202 Accepted` — run em `UPLOADING`, `PENDING` ou `PROCESSING`
+`202 Accepted` — run em `UPLOADING` ou `PENDING`
 ```json
 {
   "runId": "uuid",
@@ -94,7 +94,7 @@ Nenhum desvio. A implementação segue o PRD integralmente.
 1. Inserir diretamente no banco:
 ```sql
 INSERT INTO reconciliation_runs (id, status, reference_date, created_at, s3_key)
-VALUES ('bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb', 'PROCESSING', '2026-03-15', NOW(), 'test/input.csv');
+VALUES ('bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb', 'PENDING', '2026-03-15', NOW(), 'test/input.csv');
 ```
 2. `GET /reconciliations/bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb/stats`
 3. Esperar `202` com `runId`, `runStatus` e `createdAt`

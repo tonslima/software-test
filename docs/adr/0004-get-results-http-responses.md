@@ -12,7 +12,7 @@ O endpoint de consulta de resultados precisa comunicar estados distintos ao clie
 | Status | Condição |
 |--------|----------|
 | `404` | `runId` não existe |
-| `202` | Run em `UPLOADING`, `PENDING` ou `PROCESSING` |
+| `202` | Run em `UPLOADING` ou `PENDING` |
 | `200` | Run em `COMPLETED` ou `FAILED` |
 
 **`202` retorna:** `runId`, `runStatus` e `createdAt` — para que o cliente saiba o que está esperando e há quanto tempo.
@@ -23,6 +23,6 @@ O endpoint de consulta de resultados precisa comunicar estados distintos ao clie
 
 `202 Accepted` semânticamente significa "foi aceito e está sendo processado" — cobre os três estados intermediários. Retornar `200` com lista vazia nesses casos seria ambíguo: o cliente não saberia se o run terminou sem resultados ou se ainda está processando.
 
-`FAILED` retorna `200` porque é um estado terminal — diferente de `PENDING/PROCESSING`, não vai mudar. Retornar `202` implicaria que ainda há algo acontecendo, o que seria enganoso.
+`FAILED` retorna `200` porque é um estado terminal — diferente de `PENDING`, não vai mudar. Retornar `202` implicaria que ainda há algo acontecendo, o que seria enganoso.
 
 O `202` enriquecido com `runId` e `createdAt` evita que o cliente precise de contexto externo para entender o que está esperando.

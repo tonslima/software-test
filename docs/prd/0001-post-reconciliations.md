@@ -29,7 +29,7 @@ Um endpoint `POST /reconciliations` que aceita um arquivo CSV e uma data de refe
 - **`CreateReconciliationUseCase`** — orquestra criação do run, upload no S3, transição de status e publicação do evento Kafka via `TransactionTemplate`
 - **`ReconciliationRun`** — entidade JPA com `id`, `status`, `referenceDate`, `createdAt`, `s3Key`; valida regras de negócio da data no construtor (`init` block)
 - **`ReferenceDateException`** — exceção de domínio lançada pelo construtor de `ReconciliationRun` para violações de regra de negócio
-- **`RunStatus`** — enum com os estados `UPLOADING`, `PENDING`, `PROCESSING`, `COMPLETED`, `FAILED`
+- **`RunStatus`** — enum com os estados `UPLOADING`, `PENDING`, `COMPLETED`, `FAILED`
 - **`ReconciliationRunRepository`** — Spring Data JPA para persistência do run
 - **`ReconciliationFileStorage`** — cliente S3 (LocalStack) responsável pelo upload do arquivo
 - **`ReconciliationEventPublisher`** — publica evento no tópico Kafka com o `runId`
@@ -70,7 +70,7 @@ O `runId` é gerado no use case antes da criação da entidade para garantir que
 | Coluna | Tipo | Observação |
 |---|---|---|
 | `id` | UUID | PK |
-| `status` | VARCHAR | `UPLOADING`, `PENDING`, `PROCESSING`, `COMPLETED`, `FAILED` |
+| `status` | VARCHAR | `UPLOADING`, `PENDING`, `COMPLETED`, `FAILED` |
 | `reference_date` | DATE | Data de negócio |
 | `created_at` | TIMESTAMPTZ | Timestamp de sistema |
 | `s3_key` | VARCHAR | Referência ao arquivo no S3 |

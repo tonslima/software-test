@@ -8,7 +8,7 @@ Implementação do consumer Kafka e do fluxo completo de processamento da reconc
 
 Um consumer Kafka escuta o tópico `settlement.reconciliation.requested`, recebe o `runId`, e executa o fluxo completo de reconciliação:
 
-1. Busca o `ReconciliationRun` no banco e atualiza o status para `PROCESSING`
+1. Busca o `ReconciliationRun` no banco
 2. Faz download do CSV do S3 via streaming
 3. Carrega todas as transações internas da janela `[referenceDate - 7 dias, referenceDate]` em memória, indexadas por `transaction_id`
 4. Itera o CSV linha por linha, deduplicando por `transaction_id` (mantém primeira ocorrência)
@@ -38,7 +38,7 @@ Não há endpoint novo nesta feature — o fluxo é disparado pelo evento Kafka 
 Spring Data JPA, sem `Persistable`, detecta entidades novas pela presença do ID. Como o ID é sempre gerado no construtor (`UUID.randomUUID()`), nunca seria `null` — o JPA chamaria `merge` em vez de `persist`, gerando um `SELECT` desnecessário por linha. `isNew() = true` garante `persist` direto, essencial para performance no batch.
 
 **`TransactionTemplate` em vez de `@Transactional` no use case**
-O use case é invocado pelo consumer Kafka (sem contexto web). Usar `@Transactional` no método `execute()` englobaria inclusive as atualizações de status (`PROCESSING`, `COMPLETED`, `FAILED`), causando conflito com o controle manual de status fora do bloco de processamento. O `TransactionTemplate` delimita a transação apenas em torno do processamento e persistência dos resultados.
+O use case é invocado pelo consumer Kafka (sem contexto web). Usar `@Transactional` no método `execute()` englobaria inclusive as atualizações de status (`COMPLETED`, `FAILED`), causando conflito com o controle manual de status fora do bloco de processamento. O `TransactionTemplate` delimita a transação apenas em torno do processamento e persistência dos resultados.
 
 **`KafkaTopicConfig` com declaração explícita dos tópicos**
 Identificado durante testes: o producer publicava no tópico `settlement.reconciliation.events` mas recebia `UNKNOWN_TOPIC_OR_PARTITION` porque o tópico não existia. O Spring Kafka cria automaticamente tópicos declarados via `@Bean NewTopic` ao inicializar o `KafkaAdmin`. Ambos os tópicos (`requested` e `events`) foram declarados para garantir criação automática em qualquer ambiente.
@@ -49,7 +49,7 @@ O seed original (`internal-transactions.csv`) usava datas de 2025. A validação
 ## Desvios do PRD
 
 **Escopo da transação**
-O PRD especificava que "todo o processamento (resultados + atualização de status) roda em uma única transação". Na implementação, as atualizações de status (`PROCESSING`, `COMPLETED`, `FAILED`) acontecem fora da `TransactionTemplate`, em transações auto-gerenciadas pelo Spring Data. Apenas a persistência dos `ReconciliationResult`s ocorre dentro da transação explícita. O comportamento de rollback em falha está preservado: se o `transactionTemplate.execute` lançar exceção, os resultados são descartados e o status é marcado como `FAILED` em transação separada.
+O PRD especificava que "todo o processamento (resultados + atualização de status) roda em uma única transação". Na implementação, as atualizações de status (`COMPLETED`, `FAILED`) acontecem fora da `TransactionTemplate`, em transações auto-gerenciadas pelo Spring Data. Apenas a persistência dos `ReconciliationResult`s ocorre dentro da transação explícita. O comportamento de rollback em falha está preservado: se o `transactionTemplate.execute` lançar exceção, os resultados são descartados e o status é marcado como `FAILED` em transação separada.
 
 ## Limitações conhecidas
 

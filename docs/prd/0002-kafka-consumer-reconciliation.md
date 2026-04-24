@@ -13,7 +13,7 @@ Como bônus: se mais de 5% das transações forem `MISMATCHED` ou `UNRECONCILED`
 ## Requisitos
 
 1. O consumer escuta o tópico `settlement.reconciliation.requested` e recebe o `runId` como payload.
-2. Ao receber o evento, busca o `ReconciliationRun` pelo `runId` e atualiza o status para `PROCESSING`.
+2. Ao receber o evento, busca o `ReconciliationRun` pelo `runId`.
 3. Faz download do CSV do S3 usando a `s3Key` armazenada no run.
 4. Processa o CSV via streaming — linha por linha, sem carregar o arquivo inteiro em memória.
 5. Linhas com o mesmo `transaction_id` no CSV são deduplicadas — apenas a primeira ocorrência é processada.
@@ -78,7 +78,7 @@ classDiagram
 
 **Modificados:**
 - **`ReconciliationRun`** — adiciona campo `errorMessage` nullable
-- **`RunStatus`** — já contém `PROCESSING`, `COMPLETED`, `FAILED` — sem alteração
+- **`RunStatus`** — já contém `UPLOADING`, `PENDING`, `COMPLETED`, `FAILED` — sem alteração
 
 ## Decisões de implementação
 

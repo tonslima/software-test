@@ -11,7 +11,7 @@ Endpoint `GET /reconciliations/{runId}/stats` que retorna contagens por categori
 ## Requisitos
 
 1. Retornar `404` se o `runId` não existir.
-2. Retornar `202` se o run estiver em `UPLOADING`, `PENDING` ou `PROCESSING`, com `runId`, `runStatus` e `createdAt` — mesmo comportamento do `/results`.
+2. Retornar `202` se o run estiver em `UPLOADING` ou `PENDING`, com `runId`, `runStatus` e `createdAt` — mesmo comportamento do `/results`.
 3. Retornar `200` com as stats se o run estiver em `COMPLETED`.
 4. Retornar `200` com todas as categorias zeradas e `runStatus: FAILED` se o run falhou — o rollback garante que não há resultados persistidos.
 5. O body de `200` contém:
