@@ -95,7 +95,7 @@ Endpoint `GET /reconciliations/{runId}/results` que retorna os resultados de um 
 
 - `errorMessage` aparece como `null` no JSON quando o status é `COMPLETED` — poderia ser omitido com `@JsonInclude(NON_NULL)`.
 - Não há ordenação customizável dos resultados.
-- Paginação offset-based pode ter degradação de performance em páginas muito altas (ver ADR-0002).
+- Paginação offset-based pode ter degradação de performance em páginas muito altas.
 
 ## Como testar
 
