@@ -32,13 +32,12 @@ class ReconciliationController(
 ) {
 
     @PostMapping(consumes = ["multipart/form-data"])
-    @ResponseStatus(HttpStatus.ACCEPTED)
     fun create(
         @RequestParam("file") file: MultipartFile,
         @RequestParam("referenceDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) referenceDate: LocalDate,
-    ): CreateReconciliationResponse {
+    ): ResponseEntity<CreateReconciliationResponse> {
         val runId = createReconciliationUseCase.execute(referenceDate, file.inputStream, file.size)
-        return CreateReconciliationResponse(runId)
+        return ResponseEntity.status(HttpStatus.ACCEPTED).body(CreateReconciliationResponse(runId))
     }
 
     @GetMapping("/{runId}/results")

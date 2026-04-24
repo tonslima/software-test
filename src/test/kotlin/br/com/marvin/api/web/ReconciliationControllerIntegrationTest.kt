@@ -12,6 +12,7 @@ import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc
 import org.springframework.boot.test.context.SpringBootTest
+import org.springframework.kafka.core.KafkaTemplate
 import org.springframework.mock.web.MockMultipartFile
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.context.bean.override.mockito.MockitoBean
@@ -20,6 +21,7 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
+import software.amazon.awssdk.services.s3.S3Client
 import java.math.BigDecimal
 import java.time.LocalDate
 import java.time.ZoneOffset
@@ -46,10 +48,10 @@ class ReconciliationControllerIntegrationTest {
     private lateinit var eventPublisher: ReconciliationEventPublisher
 
     @MockitoBean
-    private lateinit var s3Client: software.amazon.awssdk.services.s3.S3Client
+    private lateinit var s3Client: S3Client
 
     @MockitoBean
-    private lateinit var kafkaTemplate: org.springframework.kafka.core.KafkaTemplate<String, String>
+    private lateinit var kafkaTemplate: KafkaTemplate<String, String>
 
     private val csvContent = "transaction_id,merchant_id,amount,currency,settled_at,processor_reference,status\n" +
         "550e8400-e29b-41d4-a716-446655440000,MERCH_001,152.30,BRL,2025-03-15T14:30:00Z,PS-2025-00012345,SETTLED"
@@ -139,7 +141,9 @@ class ReconciliationControllerIntegrationTest {
 
         mockMvc.perform(get("/reconciliations/${run.id}/results"))
             .andExpect(status().isAccepted)
+            .andExpect(jsonPath("$.runId").value(run.id.toString()))
             .andExpect(jsonPath("$.runStatus").value("PENDING"))
+            .andExpect(jsonPath("$.createdAt").isNotEmpty)
     }
 
     @Test
@@ -192,6 +196,17 @@ class ReconciliationControllerIntegrationTest {
     }
 
     @Test
+    fun `GET results returns 200 with empty list for failed run`() {
+        val run = createRun(RunStatus.FAILED)
+
+        mockMvc.perform(get("/reconciliations/${run.id}/results"))
+            .andExpect(status().isOk)
+            .andExpect(jsonPath("$.runStatus").value("FAILED"))
+            .andExpect(jsonPath("$.totalElements").value(0))
+            .andExpect(jsonPath("$.results").isEmpty)
+    }
+
+    @Test
     fun `GET results returns 400 when size exceeds maximum`() {
         val run = createRun(RunStatus.COMPLETED)
 
@@ -211,8 +226,9 @@ class ReconciliationControllerIntegrationTest {
 
         mockMvc.perform(get("/reconciliations/${run.id}/stats"))
             .andExpect(status().isAccepted)
-            .andExpect(jsonPath("$.runStatus").value("PENDING"))
             .andExpect(jsonPath("$.runId").value(run.id.toString()))
+            .andExpect(jsonPath("$.runStatus").value("PENDING"))
+            .andExpect(jsonPath("$.createdAt").isNotEmpty)
     }
 
     @Test
@@ -240,6 +256,21 @@ class ReconciliationControllerIntegrationTest {
             .andExpect(jsonPath("$.discrepancyRate").value(50.0))
             .andExpect(jsonPath("$.categories.MATCHED").value(1))
             .andExpect(jsonPath("$.categories.MISMATCHED").value(1))
+            .andExpect(jsonPath("$.categories.UNRECONCILED_PROCESSOR").value(0))
+            .andExpect(jsonPath("$.categories.UNRECONCILED_INTERNAL").value(0))
+    }
+
+    @Test
+    fun `GET stats returns 200 with zeros for failed run`() {
+        val run = createRun(RunStatus.FAILED)
+
+        mockMvc.perform(get("/reconciliations/${run.id}/stats"))
+            .andExpect(status().isOk)
+            .andExpect(jsonPath("$.runStatus").value("FAILED"))
+            .andExpect(jsonPath("$.totalTransactions").value(0))
+            .andExpect(jsonPath("$.discrepancyRate").value(0.0))
+            .andExpect(jsonPath("$.categories.MATCHED").value(0))
+            .andExpect(jsonPath("$.categories.MISMATCHED").value(0))
             .andExpect(jsonPath("$.categories.UNRECONCILED_PROCESSOR").value(0))
             .andExpect(jsonPath("$.categories.UNRECONCILED_INTERNAL").value(0))
     }
