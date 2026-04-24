@@ -194,14 +194,14 @@ class ProcessReconciliationUseCaseTest {
     }
 
     @Test
-    fun `transitions status to PROCESSING then COMPLETED`() {
+    fun `transitions status to COMPLETED`() {
         setupInternalTransactions()
         setupCsvParsing()
         whenever(resultRepository.countByRunId(runId)).thenReturn(0L)
 
         useCase.execute(runId)
 
-        verify(runRepository, org.mockito.kotlin.times(2)).save(any())
+        verify(runRepository, org.mockito.kotlin.times(1)).save(any())
         assertEquals(RunStatus.COMPLETED, run.status)
     }
 }

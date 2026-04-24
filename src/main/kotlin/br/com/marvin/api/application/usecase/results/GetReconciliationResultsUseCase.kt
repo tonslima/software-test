@@ -26,10 +26,10 @@ class GetReconciliationResultsUseCase(
             throw PageSizeException("Page size must not exceed $MAX_PAGE_SIZE")
         }
 
-        val run = runRepository.findById(runId)
-            .orElseThrow { ReconciliationRunNotFoundException(runId) }
+        val run = runRepository.findById(runId).orElse(null)
+            ?: throw ReconciliationRunNotFoundException(runId)
 
-        if (run.status == RunStatus.UPLOADING || run.status == RunStatus.PENDING || run.status == RunStatus.PROCESSING) {
+        if (run.status == RunStatus.UPLOADING || run.status == RunStatus.PENDING) {
             return ReconciliationResultsOutput.StillProcessing(
                 runId = run.id,
                 runStatus = run.status,
@@ -46,6 +46,7 @@ class GetReconciliationResultsUseCase(
 
         return ReconciliationResultsOutput.Done(
             runStatus = run.status,
+            finishedAt = run.finishedAt,
             errorMessage = run.errorMessage,
             results = results,
         )

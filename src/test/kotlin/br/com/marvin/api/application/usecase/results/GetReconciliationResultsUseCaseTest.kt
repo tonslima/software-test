@@ -68,17 +68,6 @@ class GetReconciliationResultsUseCaseTest {
     }
 
     @Test
-    fun `should return StillProcessing when run is PROCESSING`() {
-        val run = createRun(RunStatus.PROCESSING)
-        whenever(runRepository.findById(run.id)).thenReturn(Optional.of(run))
-
-        val output = useCase.execute(run.id, null, 0, 50)
-
-        assertIs<ReconciliationResultsOutput.StillProcessing>(output)
-        assertEquals(RunStatus.PROCESSING, output.runStatus)
-    }
-
-    @Test
     fun `should return Done with results when run is COMPLETED`() {
         val run = createRun(RunStatus.COMPLETED)
         val result = createResult(run, ReconciliationCategory.MATCHED)

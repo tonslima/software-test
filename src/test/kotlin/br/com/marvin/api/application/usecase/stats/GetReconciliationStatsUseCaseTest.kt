@@ -49,17 +49,6 @@ class GetReconciliationStatsUseCaseTest {
     }
 
     @Test
-    fun `should return StillProcessing when run is PROCESSING`() {
-        val run = createRun(RunStatus.PROCESSING)
-        whenever(runRepository.findById(run.id)).thenReturn(Optional.of(run))
-
-        val output = useCase.execute(run.id)
-
-        assertIs<ReconciliationStatsOutput.StillProcessing>(output)
-        assertEquals(RunStatus.PROCESSING, output.runStatus)
-    }
-
-    @Test
     fun `should return Done with stats when run is COMPLETED`() {
         val run = createRun(RunStatus.COMPLETED)
         whenever(runRepository.findById(run.id)).thenReturn(Optional.of(run))

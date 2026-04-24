@@ -18,10 +18,10 @@ class GetReconciliationStatsUseCase(
 ) {
 
     fun execute(runId: UUID): ReconciliationStatsOutput {
-        val run = runRepository.findById(runId)
-            .orElseThrow { ReconciliationRunNotFoundException(runId) }
+        val run = runRepository.findById(runId).orElse(null)
+            ?: throw ReconciliationRunNotFoundException(runId)
 
-        if (run.status == RunStatus.UPLOADING || run.status == RunStatus.PENDING || run.status == RunStatus.PROCESSING) {
+        if (run.status == RunStatus.UPLOADING || run.status == RunStatus.PENDING) {
             return ReconciliationStatsOutput.StillProcessing(
                 runId = run.id,
                 runStatus = run.status,
@@ -37,6 +37,7 @@ class GetReconciliationStatsUseCase(
         return ReconciliationStatsOutput.Done(
             runId = run.id,
             runStatus = run.status,
+            finishedAt = run.finishedAt,
             totalTransactions = total,
             discrepancyRate = discrepancyRate,
             categories = categories,

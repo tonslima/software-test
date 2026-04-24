@@ -7,12 +7,14 @@ import br.com.marvin.api.domain.model.InternalTransaction
 import br.com.marvin.api.domain.vo.ReconciliationCategory
 import br.com.marvin.api.domain.model.ReconciliationResult
 import br.com.marvin.api.domain.vo.RunStatus
+import br.com.marvin.api.exception.ReconciliationRunNotFoundException
 import br.com.marvin.api.infrastructure.persistence.InternalTransactionRepository
 import br.com.marvin.api.infrastructure.persistence.ReconciliationResultRepository
 import br.com.marvin.api.infrastructure.persistence.ReconciliationRunRepository
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 import org.springframework.transaction.support.TransactionTemplate
+import java.time.Instant
 import java.time.LocalDate
 import java.time.LocalTime
 import java.time.ZoneOffset
@@ -33,23 +35,22 @@ class ProcessReconciliationUseCase(
     private val log = LoggerFactory.getLogger(javaClass)
 
     fun execute(runId: UUID) {
-        val run = runRepository.findById(runId)
-            .orElseThrow { IllegalArgumentException("ReconciliationRun not found: $runId") }
-
-        run.status = RunStatus.PROCESSING
-        runRepository.save(run)
+        val run = runRepository.findById(runId).orElse(null)
+            ?: throw ReconciliationRunNotFoundException(runId)
 
         try {
             transactionTemplate.execute {
                 processReconciliation(runId, run.s3Key, run.referenceDate)
             }
             run.status = RunStatus.COMPLETED
+            run.finishedAt = Instant.now()
             runRepository.save(run)
 
             checkAlertThreshold(runId)
         } catch (ex: Exception) {
             log.error("Reconciliation failed for runId={}", runId, ex)
             run.status = RunStatus.FAILED
+            run.finishedAt = Instant.now()
             run.errorMessage = ex.message?.take(1000)
             runRepository.save(run)
         }
@@ -58,8 +59,7 @@ class ProcessReconciliationUseCase(
     private fun processReconciliation(runId: UUID, s3Key: String, referenceDate: LocalDate) {
         val run = runRepository.getReferenceById(runId)
 
-        val internalTransactionsMap = loadInternalTransactions(referenceDate)
-        val matchedInternalIds = mutableSetOf<UUID>()
+        val internalTransactionsMap = loadInternalTransactions(referenceDate).toMutableMap()
         val batch = mutableListOf<ReconciliationResult>()
 
         fileStorage.download(s3Key).use { inputStream ->
@@ -69,7 +69,7 @@ class ProcessReconciliationUseCase(
                 if (matchResult.category == ReconciliationCategory.MATCHED ||
                     matchResult.category == ReconciliationCategory.MISMATCHED
                 ) {
-                    matchedInternalIds.add(csvTransaction.transactionId)
+                    internalTransactionsMap.remove(csvTransaction.transactionId)
                 }
 
                 batch.add(
@@ -90,7 +90,6 @@ class ProcessReconciliationUseCase(
         }
 
         internalTransactionsMap
-            .filter { it.key !in matchedInternalIds }
             .forEach { (_, internal) ->
                 batch.add(
                     ReconciliationResult(
