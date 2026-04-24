@@ -21,5 +21,6 @@ class ReconciliationConsumer(
         val runId = UUID.fromString(message)
         log.info("Received reconciliation event for runId={}", runId)
         processReconciliationUseCase.execute(runId)
+        log.info("Reconciliation event processed for runId={}", runId)
     }
 }

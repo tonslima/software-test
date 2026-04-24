@@ -3,6 +3,7 @@ package br.com.marvin.api.web
 import br.com.marvin.api.exception.PageSizeException
 import br.com.marvin.api.exception.ReconciliationRunNotFoundException
 import br.com.marvin.api.exception.ReferenceDateException
+import org.slf4j.LoggerFactory
 import org.springframework.http.HttpStatus
 import org.springframework.http.ProblemDetail
 import org.springframework.web.bind.MissingServletRequestParameterException
@@ -13,6 +14,8 @@ import org.springframework.web.multipart.support.MissingServletRequestPartExcept
 
 @RestControllerAdvice
 class GlobalExceptionHandler {
+
+    private val log = LoggerFactory.getLogger(javaClass)
 
     @ExceptionHandler(ReferenceDateException::class)
     fun handleReferenceDateException(ex: ReferenceDateException): ProblemDetail =
@@ -37,4 +40,10 @@ class GlobalExceptionHandler {
     @ExceptionHandler(MissingServletRequestParameterException::class)
     fun handleMissingParam(ex: MissingServletRequestParameterException): ProblemDetail =
         ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST, ex.message)
+
+    @ExceptionHandler(Exception::class)
+    fun handleUnexpected(ex: Exception): ProblemDetail {
+        log.error("Unexpected error", ex)
+        return ProblemDetail.forStatusAndDetail(HttpStatus.INTERNAL_SERVER_ERROR, "An unexpected error occurred")
+    }
 }

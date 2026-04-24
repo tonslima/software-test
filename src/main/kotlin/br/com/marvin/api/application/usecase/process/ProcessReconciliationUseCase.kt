@@ -38,6 +38,9 @@ class ProcessReconciliationUseCase(
         val run = runRepository.findById(runId).orElse(null)
             ?: throw ReconciliationRunNotFoundException(runId)
 
+        log.info("Starting reconciliation for runId={}", runId)
+        val startedAt = System.currentTimeMillis()
+
         try {
             transactionTemplate.execute {
                 processReconciliation(runId, run.s3Key, run.referenceDate)
@@ -46,7 +49,11 @@ class ProcessReconciliationUseCase(
             run.finishedAt = Instant.now()
             runRepository.save(run)
 
-            checkAlertThreshold(runId)
+            val elapsed = System.currentTimeMillis() - startedAt
+            val total = resultRepository.countByRunId(runId)
+            log.info("Reconciliation completed for runId={} in {}ms — {} results", runId, elapsed, total)
+
+            checkAlertThreshold(runId, total)
         } catch (ex: Exception) {
             log.error("Reconciliation failed for runId={}", runId, ex)
             run.status = RunStatus.FAILED
@@ -118,8 +125,7 @@ class ProcessReconciliationUseCase(
             referenceDate.atTime(LocalTime.MAX).toInstant(ZoneOffset.UTC),
         ).associateBy { it.transactionId }
 
-    private fun checkAlertThreshold(runId: UUID) {
-        val total = resultRepository.countByRunId(runId)
+    private fun checkAlertThreshold(runId: UUID, total: Long) {
         if (total == 0L) return
 
         val discrepancies = resultRepository.countByRunIdAndCategoryIn(
