@@ -19,9 +19,6 @@ Before implementing any feature:
 After implementing:
 3. `/write-a-spec <feature>` — document what was built → saved to `docs/spec/`
 
-At the end, before opening the PR:
-4. `/prepare-submission` — generate PR README draft from all PRDs and specs
-
 **If asked to implement a feature without a PRD, do not start. Remind the user to run `/grill-me` and `/write-a-prd` first. If the user explicitly says to skip the workflow, proceed with the implementation.**
 
 ## Commit Convention
@@ -144,7 +141,7 @@ br.com.marvin.api
 
 ## Domain
 
-Read `docs/case/domain-glossary.md` and `docs/case/processor-api-spec.md` before touching reconciliation code.
+Read `docs/domain-glossary.md` and `docs/processor-api-spec.md` before touching reconciliation code.
 
 Key rules are documented there. Do not reinterpret them — follow them exactly.
 
@@ -170,7 +167,6 @@ POST /reconciliations
 
 Kafka Consumer
   → download CSV from S3
-  → update run status: PROCESSING
   → stream CSV line by line
   → reconcile against internal transactions
   → persist results
@@ -179,8 +175,8 @@ Kafka Consumer
 
 ## ReconciliationRun Status
 
-`PENDING` → `PROCESSING` → `COMPLETED`  
-`PENDING` → `PROCESSING` → `FAILED`
+`UPLOADING` → `PENDING` → `COMPLETED`  
+`UPLOADING` → `PENDING` → `FAILED`
 
 ## Bonus
 
