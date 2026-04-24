@@ -14,6 +14,7 @@ sealed class ReconciliationResultsOutput {
     ) : ReconciliationResultsOutput()
     data class Done(
         val runStatus: RunStatus,
+        val finishedAt: Instant?,
         val errorMessage: String?,
         val results: Page<ReconciliationResult>,
     ) : ReconciliationResultsOutput()

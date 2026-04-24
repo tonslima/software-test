@@ -17,6 +17,7 @@ object ReconciliationResultMapper {
     fun toResultResponse(output: ReconciliationResultsOutput.Done): ReconciliationResultResponse =
         ReconciliationResultResponse(
             runStatus = output.runStatus,
+            finishedAt = output.finishedAt,
             errorMessage = output.errorMessage,
             page = output.results.number,
             size = output.results.size,

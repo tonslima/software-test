@@ -11,3 +11,5 @@ databaseChangeLog:
       file: db/changelog/005-add-error-message-to-runs.yaml
   - include:
       file: db/changelog/006-add-index-results-run-category.yaml
+  - include:
+      file: db/changelog/007-add-finished-at-to-runs.yaml

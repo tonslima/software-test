@@ -15,6 +15,7 @@ sealed class ReconciliationStatsOutput {
     data class Done(
         val runId: UUID,
         val runStatus: RunStatus,
+        val finishedAt: Instant?,
         val totalTransactions: Long,
         val discrepancyRate: Double,
         val categories: Map<ReconciliationCategory, Long>,

@@ -1,0 +1,11 @@
+databaseChangeLog:
+  - changeSet:
+      id: 007-add-finished-at-to-runs
+      author: settlement-team
+      changes:
+        - addColumn:
+            tableName: reconciliation_runs
+            columns:
+              - column:
+                  name: finished_at
+                  type: timestamptz

@@ -33,6 +33,9 @@ class ReconciliationRun(
     @Column(name = "s3_key", nullable = false)
     val s3Key: String,
 
+    @Column(name = "finished_at")
+    var finishedAt: Instant? = null,
+
     @Column(name = "error_message", length = 1000)
     var errorMessage: String? = null,
 ) {

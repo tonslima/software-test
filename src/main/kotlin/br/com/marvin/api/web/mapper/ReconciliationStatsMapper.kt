@@ -17,6 +17,7 @@ object ReconciliationStatsMapper {
         ReconciliationStatsResponse(
             runId = output.runId,
             runStatus = output.runStatus,
+            finishedAt = output.finishedAt,
             totalTransactions = output.totalTransactions,
             discrepancyRate = output.discrepancyRate,
             categories = output.categories,
